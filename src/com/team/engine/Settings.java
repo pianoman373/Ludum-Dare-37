@@ -1,7 +1,5 @@
 package com.team.engine;
 
-import java.nio.file.Files;
-
 import com.team.engine.Util;
 import com.google.gson.Gson;
 import com.team.engine.SettingsJson;
