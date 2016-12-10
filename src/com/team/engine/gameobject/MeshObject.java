@@ -2,20 +2,13 @@ package com.team.engine.gameobject;
 
 import static com.team.engine.Globals.*;
 
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
-
-import com.bulletphysics.collision.shapes.CollisionShape;
-import com.bulletphysics.dynamics.RigidBody;
-import com.bulletphysics.linearmath.DefaultMotionState;
-import com.bulletphysics.linearmath.Transform;
 import com.team.engine.Camera;
 import com.team.engine.Scene;
 import com.team.engine.rendering.Material;
 import com.team.engine.rendering.Mesh;
 import com.team.engine.rendering.Shader;
 import com.team.engine.vecmath.Vec3;
+import com.team.engine.vecmath.Vec4;
 
 /**
  * MeshObject is a quick and easy to use implementation of GameObject. It handles simple physics and mesh rendering.
@@ -27,10 +20,30 @@ import com.team.engine.vecmath.Vec3;
  * you must call super.functionName() at the beginning of that function, otherwise this class can't do it's job.
  */
 public class MeshObject implements GameObject {
-	public RigidBody rb;
 	private Mesh mesh;
 	private Material material;
 	private float scale;
+	
+	public Vec3 position;
+	public Vec4 rotation;
+
+	
+	public Vec3 getPosition() {
+		return position;
+	}
+
+	public void setPosition(Vec3 position) {
+		this.position = position;
+	}
+
+	public Vec4 getRotation() {
+		return rotation;
+	}
+
+	public void setRotation(Vec4 rotation) {
+		this.rotation = rotation;
+	}
+
 	
 	/**
 	 * Create a MeshObject, you still have to add it to a scene using Engine.scene.add(thisObject) for it to work.
@@ -48,29 +61,18 @@ public class MeshObject implements GameObject {
 	 * This object is hardcoded to use the standard shader. If you need to use a custom shader you will have to render manually or make
 	 * your own game object.
 	 */
-	public MeshObject(Vec3 pos, Vec3 velocity, Quat4f rotation, CollisionShape bounds, float mass, Mesh mesh, float scale, Material material) {
-		// setup the motion state for the crate
-		DefaultMotionState fallMotionState = new DefaultMotionState(new Transform(new Matrix4f(rotation, new Vector3f(pos.x, pos.y, pos.z), 1.0f)));
-
-		Vector3f fallInertia = new Vector3f(0,0,0);
-		if (bounds != null)
-			bounds.calculateLocalInertia(mass,fallInertia); 
+	public MeshObject(Vec3 pos, Vec4 rotation, Mesh mesh, float scale, Material material) {
 		this.mesh = mesh;
 		this.material = material;
 		this.scale = scale;
-
-		rb = new RigidBody(mass,fallMotionState,bounds,fallInertia);
 		
-		rb.setLinearVelocity(velocity.asv3f());
-	}
-	
-	public MeshObject(Vec3 pos, Quat4f rotation, CollisionShape bounds, float mass, Mesh mesh, float scale, Material material) {
-		this(pos, vec3(), rotation, bounds, mass, mesh, scale, material);
+		this.position = pos;
+		this.rotation = rotation;
 	}
 	
 	@Override
 	public void init(Scene scene) {
-		scene.world.addRigidBody(this.rb);
+		
 	}
 	
 	@Override
@@ -78,12 +80,7 @@ public class MeshObject implements GameObject {
 		
 	}
 	
-	public Transform getTransform() {
-		Transform t = new Transform();
-		this.rb.getWorldTransform(t);
-		
-		return t;
-	}
+	
 	
 	@Override
 	public void render(Scene scene, Camera cam) {
@@ -92,28 +89,13 @@ public class MeshObject implements GameObject {
 		
 		s.uniformMaterial(this.material);
 		
-		Transform trans = new Transform();
-		Quat4f q = new Quat4f();
-		rb.getMotionState().getWorldTransform(trans);
-		trans.getRotation(q);
-		
-		Matrix4f mat = new Matrix4f();
-		trans.getMatrix(mat);
-		s.uniformMat4("model", mat4(mat).scale(this.scale));
+		s.uniformMat4("model", mat4().translate(position).rotate(rotation).scale(this.scale));
 		mesh.draw();
 	}
 
 	@Override
 	public void renderShadow(Shader s) {
-		Transform trans = new Transform();
-		Quat4f q = new Quat4f();
-		rb.getMotionState().getWorldTransform(trans);
-		trans.getRotation(q);
-		
-		Matrix4f mat = new Matrix4f();
-		trans.getMatrix(mat);
-		
-		s.uniformMat4("model", mat4(mat).scale(this.scale));
+		s.uniformMat4("model", mat4().translate(position).rotate(rotation).scale(this.scale));
 		mesh.draw();
 	}
 }
