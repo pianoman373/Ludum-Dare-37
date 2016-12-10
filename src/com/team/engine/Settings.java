@@ -34,7 +34,6 @@ public class Settings {
 			WINDOW_HEIGHT = json.WINDOW_HEIGHT;
 			FULLSCREEN = json.FULLSCREEN;
 			MAX_FPS = json.MAX_FPS;
-			Globals.print(ENABLE_NORMAL_MAPPING);
 		}else{
 			Globals.print("No config found useing default settings.");
 		}
