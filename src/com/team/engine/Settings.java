@@ -35,7 +35,7 @@ public class Settings {
 			FULLSCREEN = json.FULLSCREEN;
 			MAX_FPS = json.MAX_FPS;
 		}else{
-			Globals.print("No config found useing default settings.");
+			Globals.print("No config found using default settings.");
 		}
 	}
 }
