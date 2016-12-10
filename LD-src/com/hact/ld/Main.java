@@ -12,7 +12,7 @@ import com.team.engine.rendering.ObjLoader;
 public class Main extends AbstractGame {
 	public static Mesh tileMesh;
 	
-	final int GRID_SIZE = 10;
+	public static final int GRID_SIZE = 10;
 	
 	public static void main(String[] args) {
 		Settings.loadConfig();
@@ -24,13 +24,6 @@ public class Main extends AbstractGame {
 		
 		Engine.scene.ambient = vec3(0.3, 0.3, 0.3);
 		Engine.scene.skyColor = vec3(0.3, 0.3, 0.3);
-		
-		//grid
-		for (int x = 0; x < GRID_SIZE; x++) {
-			for (int y = 0; y < GRID_SIZE; y++) {
-				Engine.scene.add(new Tile(vec3(x, 0, y)));
-			}
-		}
 		
 		//left wall
 		for (int y = 0; y < GRID_SIZE + 2; y++) {
@@ -51,6 +44,8 @@ public class Main extends AbstractGame {
 		for (int x = 0; x < GRID_SIZE; x++) {
 			Engine.scene.add(new Tile(vec3(x, 1, GRID_SIZE)));
 		}
+		//add floor
+		Map.init();
 	}
 	
 	public void update() {
